@@ -1,27 +1,41 @@
-/**
- * Middleware centralisé de gestion des erreurs.
- * Format : { success: false, message: "...", errors: [] }
- */
-export const errorHandler = (err, req, res, next) => {
-  console.error("❌ Erreur :", err);
+import {
+  UniqueConstraintError,
+  ValidationError,
+  ForeignKeyConstraintError,
+} from "sequelize";
+import { errorResponse } from "../utils/apiResponse.js";
 
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Erreur interne du serveur";
-
-  res.status(statusCode).json({
-    success: false,
-    message,
-    errors: err.errors || [],
+export const notFound = (req, res) =>
+  errorResponse(res, {
+    statusCode: 404,
+    message: `Route introuvable: ${req.method} ${req.originalUrl}`,
   });
-};
 
-/**
- * Middleware 404.
- */
-export const notFound = (req, res, next) => {
-  res.status(404).json({
-    success: false,
-    message: `Route non trouvée : ${req.method} ${req.originalUrl}`,
-    errors: [],
+export const errorHandler = (err, req, res, next) => {
+  console.error(err);
+
+  if (err instanceof UniqueConstraintError) {
+    return errorResponse(res, {
+      statusCode: 409,
+      message: "Une valeur existe déjà",
+      errors: err.errors.map((e) => ({ field: e.path, message: e.message })),
+    });
+  }
+  if (err instanceof ForeignKeyConstraintError) {
+    return errorResponse(res, {
+      statusCode: 400,
+      message: "Référence associée introuvable ou invalide",
+    });
+  }
+  if (err instanceof ValidationError) {
+    return errorResponse(res, {
+      statusCode: 422,
+      message: "Erreur de validation",
+      errors: err.errors.map((e) => ({ field: e.path, message: e.message })),
+    });
+  }
+  return errorResponse(res, {
+    statusCode: err.statusCode || 500,
+    message: err.message || "Erreur interne du serveur",
   });
 };

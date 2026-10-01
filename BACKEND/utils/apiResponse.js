@@ -1,6 +1,3 @@
-/**
- * Réponse succès standardisée.
- */
 export const successResponse = (
   res,
   data = {},
@@ -14,9 +11,6 @@ export const successResponse = (
   });
 };
 
-/**
- * Réponse erreur standardisée.
- */
 export const errorResponse = (
   res,
   message = "Error message",

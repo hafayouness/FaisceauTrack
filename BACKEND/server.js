@@ -1,10 +1,8 @@
 import "dotenv/config";
-
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-
 import sequelize from "./config/database.js";
 import config from "./config/config.js";
 import routes from "./routes/index.js";
@@ -12,9 +10,6 @@ import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
 const app = express();
 
-// ===============================
-// MIDDLEWARES GLOBAUX
-// ===============================
 app.use(helmet());
 
 app.use(
@@ -31,9 +26,6 @@ if (config.server.env === "development") {
   app.use(morgan("dev"));
 }
 
-// ===============================
-// ROUTES
-// ===============================
 app.use("/api", routes);
 
 app.get("/", (req, res) => {
