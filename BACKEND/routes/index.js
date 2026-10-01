@@ -1,8 +1,9 @@
-import express from "express";
-import healthRoutes from "./health.routes.js";
+import { Router } from "express";
+import authRoutes from "./authRoutes.js";
+import userRoutes from "./userRoutes.js";
 
-const router = express.Router();
-
-router.use("/health", healthRoutes);
+const router = Router();
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
 
 export default router;

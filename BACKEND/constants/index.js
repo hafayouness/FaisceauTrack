@@ -1,0 +1,62 @@
+export const ROLES = Object.freeze({
+  ADMIN: "ADMIN",
+  LOGISTIC_MANAGER: "LOGISTIC_MANAGER",
+  RECEPTION: "RECEPTION",
+  VIEWER: "VIEWER",
+});
+export const ROLE_VALUES = Object.values(ROLES);
+
+export const DELIVERY_STATUS = Object.freeze({
+  PREPARATION: "PREPARATION",
+  LOADING: "LOADING",
+  READY: "READY",
+  IN_TRANSIT: "IN_TRANSIT",
+  ARRIVED: "ARRIVED",
+  PARTIAL_RECEPTION: "PARTIAL_RECEPTION",
+  RECEIVED: "RECEIVED",
+  CANCELLED: "CANCELLED",
+});
+export const DELIVERY_STATUS_VALUES = Object.values(DELIVERY_STATUS);
+
+export const RECEPTION_STATUS = Object.freeze({
+  PENDING: "PENDING",
+  PARTIAL: "PARTIAL",
+  COMPLETED: "COMPLETED",
+  WITH_ISSUE: "WITH_ISSUE",
+});
+export const RECEPTION_STATUS_VALUES = Object.values(RECEPTION_STATUS);
+
+export const TRAILER_DELIVERY_STATUS = Object.freeze({
+  LOADING: "LOADING",
+  READY: "READY",
+  IN_TRANSIT: "IN_TRANSIT",
+  ARRIVED: "ARRIVED",
+  RECEIVED: "RECEIVED",
+  CANCELLED: "CANCELLED",
+});
+export const TRAILER_DELIVERY_STATUS_VALUES = Object.values(
+  TRAILER_DELIVERY_STATUS,
+);
+
+export const HISTORY_ACTIONS = Object.freeze({
+  CREATE: "CREATE",
+  UPDATE: "UPDATE",
+  DELETE: "DELETE",
+  STATUS_CHANGE: "STATUS_CHANGE",
+  RECEPTION: "RECEPTION",
+  EXPORT: "EXPORT",
+  LOGIN: "LOGIN",
+});
+
+export const HISTORY_ENTITIES = Object.freeze({
+  USER: "User",
+  REFERENCE: "Reference",
+  TRAILER: "Trailer",
+  TRANSPORTER: "Transporter",
+  DESTINATION: "Destination",
+  DELIVERY: "Delivery",
+  DELIVERY_ITEM: "DeliveryItem",
+  RECEPTION: "Reception",
+});
+
+export const DEFAULT_UNIT = "PCS";
