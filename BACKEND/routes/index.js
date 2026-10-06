@@ -5,6 +5,7 @@ import referenceRoutes from "./referenceRoutes.js";
 import destinationRoutes from "./destinationRoutes.js";
 import transporterRoutes from "./transporterRoutes.js";
 import trailerRoutes from "./trailerRoutes.js";
+import deliveryRoutes from "./deliveryRoutes.js";
 
 const router = Router();
 router.use("/auth", authRoutes);
@@ -13,5 +14,6 @@ router.use("/references", referenceRoutes);
 router.use("/destinations", destinationRoutes);
 router.use("/transporters", transporterRoutes);
 router.use("/trailers", trailerRoutes);
+router.use("/deliveries", deliveryRoutes);
 
 export default router;
