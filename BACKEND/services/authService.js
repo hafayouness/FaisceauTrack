@@ -23,10 +23,8 @@ export const register = async ({ name, email, password, role }) => {
     throw error;
   }
 
-  // Hasher le mot de passe
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // Créer l'utilisateur
   const user = await User.create({
     name,
     email: normalizedEmail,
