@@ -7,6 +7,7 @@ import AppLayout from "./components/layout/AppLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import Deliveries from "./pages/Deliveries";
 
 // import { ROLES } from "./utils/constants";
 
@@ -33,6 +34,7 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/deliveries" element={<Deliveries />} />
 
             {/* Admin uniquement */}
             {/* <Route element={<RoleRoute roles={[ROLES.ADMIN]} />}>
