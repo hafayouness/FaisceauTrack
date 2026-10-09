@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { Search, Plus, Download, Eye, Truck } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import {
+  Search,
+  Plus,
+  Download,
+  Eye,
+  Pencil,
+  Trash2,
+  Truck,
+} from "lucide-react";
 
 import { deliveriesApi } from "../api/deliveriesApi";
 import PageHeader from "../components/layout/PageHeader";
@@ -10,6 +19,9 @@ import Badge from "../components/ui/Badge";
 import Pagination from "../components/ui/Pagination";
 import EmptyState from "../components/ui/EmptyState";
 import Spinner from "../components/ui/Spinner";
+import Modal from "../components/ui/Modal";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
+import DeliveryForm from "../components/forms/DeliveryForm";
 
 import { useDebounce } from "../hooks/useDebounce";
 import { usePermissions } from "../hooks/usePermissions";
@@ -17,11 +29,16 @@ import { DELIVERY_STATUS_META, PAGE_SIZE } from "../utils/constants";
 import { formatDate } from "../utils/formatters";
 
 export default function Deliveries() {
+  const qc = useQueryClient();
   const { canManageDeliveries } = usePermissions();
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+
+  const [showForm, setShowForm] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const debouncedSearch = useDebounce(search);
 
@@ -32,12 +49,24 @@ export default function Deliveries() {
     status: status || undefined,
   };
 
+  /* ---------- Liste ---------- */
   const { data, isLoading } = useQuery({
     queryKey: ["deliveries", params],
     queryFn: () => deliveriesApi.list(params),
     keepPreviousData: true,
   });
 
+  /* ---------- Suppression ---------- */
+  const deleteMutation = useMutation({
+    mutationFn: deliveriesApi.remove,
+    onSuccess: () => {
+      toast.success("Livraison supprimée");
+      qc.invalidateQueries({ queryKey: ["deliveries"] });
+      setDeleteTarget(null);
+    },
+  });
+
+  /* ---------- Export Excel ---------- */
   const handleExport = async () => {
     try {
       const res = await deliveriesApi.exportExcel(params);
@@ -51,10 +80,38 @@ export default function Deliveries() {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+      toast.success("Export Excel généré");
     } catch (err) {
       console.error("Export error:", err);
+      toast.error("Erreur lors de l'export");
     }
   };
+
+  /* ---------- Handlers modal ---------- */
+  const handleSaved = () => {
+    setShowForm(false);
+    setEditItem(null);
+    qc.invalidateQueries({ queryKey: ["deliveries"] });
+    qc.invalidateQueries({ queryKey: ["dashboard"] });
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditItem(null);
+  };
+
+  /* ---------- Statut de verrouillage ---------- */
+  const canEdit = (delivery) =>
+    ![
+      "IN_TRANSIT",
+      "ARRIVED",
+      "PARTIAL_RECEPTION",
+      "RECEIVED",
+      "CANCELLED",
+    ].includes(delivery.status);
+
+  const canDelete = (delivery) =>
+    ["PREPARATION", "CANCELLED"].includes(delivery.status);
 
   return (
     <>
@@ -66,15 +123,11 @@ export default function Deliveries() {
             <Button variant="secondary" icon={Download} onClick={handleExport}>
               Exporter Excel
             </Button>
-            {canManageDeliveries && (
-              <Button
-                icon={Plus}
-                disabled
-                title="Disponible à l'étape suivante"
-              >
+            {canManageDeliveries ? (
+              <Button icon={Plus} onClick={() => setShowForm(true)}>
                 Nouvelle livraison
               </Button>
-            )}
+            ) : null}
           </>
         }
       />
@@ -123,6 +176,13 @@ export default function Deliveries() {
               ? "Aucun résultat pour ces filtres."
               : "Aucune livraison enregistrée pour le moment."
           }
+          action={
+            canManageDeliveries && !search && !status ? (
+              <Button icon={Plus} onClick={() => setShowForm(true)}>
+                Créer une livraison
+              </Button>
+            ) : null
+          }
         />
       ) : (
         <>
@@ -164,13 +224,37 @@ export default function Deliveries() {
                       <td>{formatDate(d.createdAt)}</td>
                       <td>
                         <div className="table-actions">
+                          {/* Voir */}
                           <Link
                             to={`/deliveries/${d.id}`}
                             className="btn-icon"
-                            title="Voir"
+                            title="Voir le détail"
                           >
                             <Eye size={16} />
                           </Link>
+
+                          {/* Modifier */}
+                          {canManageDeliveries && canEdit(d) ? (
+                            <button
+                              className="btn-icon"
+                              onClick={() => setEditItem(d)}
+                              title="Modifier"
+                            >
+                              <Pencil size={16} />
+                            </button>
+                          ) : null}
+
+                          {/* Supprimer */}
+                          {canManageDeliveries && canDelete(d) ? (
+                            <button
+                              className="btn-icon"
+                              style={{ color: "var(--color-danger)" }}
+                              onClick={() => setDeleteTarget(d)}
+                              title="Supprimer"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          ) : null}
                         </div>
                       </td>
                     </tr>
@@ -183,6 +267,41 @@ export default function Deliveries() {
           <Pagination pagination={data.pagination} onPageChange={setPage} />
         </>
       )}
+
+      {/* Modal création / édition */}
+      <Modal
+        open={showForm || !!editItem}
+        onClose={handleCancel}
+        title={editItem ? "Modifier la livraison" : "Nouvelle livraison"}
+        size="lg"
+        footer={
+          <>
+            <Button variant="secondary" onClick={handleCancel}>
+              Annuler
+            </Button>
+            <Button type="submit" form="delivery-form">
+              {editItem ? "Enregistrer" : "Créer la livraison"}
+            </Button>
+          </>
+        }
+      >
+        <DeliveryForm
+          initial={editItem}
+          onSuccess={handleSaved}
+          onCancel={handleCancel}
+        />
+      </Modal>
+
+      {/* Confirmation suppression */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => deleteMutation.mutate(deleteTarget.id)}
+        title="Supprimer la livraison"
+        message={`Voulez-vous vraiment supprimer la livraison "${deleteTarget?.deliveryNumber}" ? Cette action est irréversible.`}
+        confirmLabel="Supprimer"
+        loading={deleteMutation.isPending}
+      />
     </>
   );
 }

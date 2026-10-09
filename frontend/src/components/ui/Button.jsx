@@ -21,7 +21,7 @@ export default function Button({
       {loading ? (
         <span className="spinner" />
       ) : Icon ? (
-        <Icon size={16} />
+        <Icon size={18} />
       ) : null}
       {children}
     </button>
