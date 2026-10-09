@@ -8,6 +8,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Deliveries from "./pages/Deliveries";
+import References from "./pages/References";
+import ReferenceDetail from "./pages/ReferenceDetail";
 
 // import { ROLES } from "./utils/constants";
 
@@ -35,6 +37,8 @@ export default function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/deliveries" element={<Deliveries />} />
+            <Route path="/references" element={<References />} />
+            <Route path="/references/:id" element={<ReferenceDetail />} />
 
             {/* Admin uniquement */}
             {/* <Route element={<RoleRoute roles={[ROLES.ADMIN]} />}>
