@@ -50,6 +50,12 @@ export const HISTORY_ENTITIES = {
   DeliveryItem: "Ligne de livraison",
   Reception: "Réception",
 };
+const ROLE_COLORS = {
+  [ROLES.ADMIN]: "danger",
+  [ROLES.LOGISTIC_MANAGER]: "primary",
+  [ROLES.RECEPTION]: "info",
+  [ROLES.VIEWER]: "default",
+};
 
 export const DEFAULT_UNIT = "PCS";
 export const PAGE_SIZE = 10;
