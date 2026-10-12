@@ -15,6 +15,9 @@ import Transporters from "./pages/Transporters";
 
 import { ROLES } from "./utils/constants";
 import Users from "./pages/Users";
+import Trailers from "./pages/Trailers";
+import Destinations from "./pages/Destinations";
+import History from "./pages/History";
 
 export default function App() {
   return (
@@ -43,6 +46,9 @@ export default function App() {
             <Route path="/references" element={<References />} />
             <Route path="/references/:id" element={<ReferenceDetail />} />
             <Route path="/transporters" element={<Transporters />} />
+            <Route path="/trailers" element={<Trailers />} />
+            <Route path="/destinations" element={<Destinations />} />
+            <Route path="/history" element={<History />} />
 
             <Route element={<RoleRoute roles={[ROLES.ADMIN]} />}>
               <Route path="/users" element={<Users />} />
@@ -50,7 +56,6 @@ export default function App() {
           </Route>
         </Route>
 
-        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
