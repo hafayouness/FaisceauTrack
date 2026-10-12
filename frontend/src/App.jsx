@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./routes/ProtectedRoute";
-// import RoleRoute from "./routes/RoleRoute";
+import RoleRoute from "./routes/RoleRoute";
 import AppLayout from "./components/layout/AppLayout";
 
 import Login from "./pages/Login";
@@ -11,7 +11,10 @@ import Deliveries from "./pages/Deliveries";
 import References from "./pages/References";
 import ReferenceDetail from "./pages/ReferenceDetail";
 
-// import { ROLES } from "./utils/constants";
+import Transporters from "./pages/Transporters";
+
+import { ROLES } from "./utils/constants";
+import Users from "./pages/Users";
 
 export default function App() {
   return (
@@ -39,11 +42,11 @@ export default function App() {
             <Route path="/deliveries" element={<Deliveries />} />
             <Route path="/references" element={<References />} />
             <Route path="/references/:id" element={<ReferenceDetail />} />
+            <Route path="/transporters" element={<Transporters />} />
 
-            {/* Admin uniquement */}
-            {/* <Route element={<RoleRoute roles={[ROLES.ADMIN]} />}>
+            <Route element={<RoleRoute roles={[ROLES.ADMIN]} />}>
               <Route path="/users" element={<Users />} />
-            </Route> */}
+            </Route>
           </Route>
         </Route>
 
