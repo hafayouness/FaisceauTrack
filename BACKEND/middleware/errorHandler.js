@@ -5,37 +5,49 @@ import {
 } from "sequelize";
 import { errorResponse } from "../utils/apiResponse.js";
 
-export const notFound = (req, res) =>
-  errorResponse(res, {
-    statusCode: 404,
-    message: `Route introuvable: ${req.method} ${req.originalUrl}`,
-  });
+export const notFound = (req, res) => {
+  return errorResponse(
+    res,
+    `Route introuvable: ${req.method} ${req.originalUrl}`,
+    [],
+    404,
+  );
+};
 
 export const errorHandler = (err, req, res, next) => {
-  console.error(err);
+  console.error("❌ Erreur:", err.message);
 
   if (err instanceof UniqueConstraintError) {
-    return errorResponse(res, {
-      statusCode: 409,
-      message: "Une valeur existe déjà",
-      errors: err.errors.map((e) => ({ field: e.path, message: e.message })),
-    });
+    return errorResponse(
+      res,
+      "Une valeur existe déjà",
+      err.errors.map((e) => ({ field: e.path, message: e.message })),
+      409,
+    );
   }
+
   if (err instanceof ForeignKeyConstraintError) {
-    return errorResponse(res, {
-      statusCode: 400,
-      message: "Référence associée introuvable ou invalide",
-    });
+    return errorResponse(
+      res,
+      "Référence associée introuvable ou invalide",
+      [],
+      400,
+    );
   }
+
   if (err instanceof ValidationError) {
-    return errorResponse(res, {
-      statusCode: 422,
-      message: "Erreur de validation",
-      errors: err.errors.map((e) => ({ field: e.path, message: e.message })),
-    });
+    return errorResponse(
+      res,
+      "Erreur de validation",
+      err.errors.map((e) => ({ field: e.path, message: e.message })),
+      422,
+    );
   }
-  return errorResponse(res, {
-    statusCode: err.statusCode || 500,
-    message: err.message || "Erreur interne du serveur",
-  });
+
+  return errorResponse(
+    res,
+    err.message || "Erreur interne du serveur",
+    err.errors || [],
+    err.statusCode || 500,
+  );
 };

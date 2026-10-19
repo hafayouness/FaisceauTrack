@@ -17,9 +17,19 @@ export const errorResponse = (
   errors = [],
   statusCode = 400,
 ) => {
+  let safeMessage;
+
+  if (typeof message === "string") {
+    safeMessage = message;
+  } else if (message && typeof message === "object") {
+    safeMessage = message.message || JSON.stringify(message);
+  } else {
+    safeMessage = String(message);
+  }
+
   return res.status(statusCode).json({
     success: false,
-    message,
-    errors,
+    message: safeMessage,
+    errors: Array.isArray(errors) ? errors : [],
   });
 };
