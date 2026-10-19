@@ -1,9 +1,10 @@
-import { Menu, LogOut, User } from "lucide-react";
+import { Menu, LogOut, User, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useUiStore } from "../../store/uiStore";
 import { initials } from "../../utils/formatters";
+import { ROLE_LABELS } from "../../utils/constants";
 
 export default function Topbar() {
   const { user, logout } = useAuth();
@@ -12,7 +13,6 @@ export default function Topbar() {
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
-  // Fermer le menu si on clique ailleurs
   useEffect(() => {
     const handler = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -22,6 +22,16 @@ export default function Topbar() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const handleNavigate = (path) => {
+    setMenuOpen(false);
+    navigate(path);
+  };
+
+  const handleLogout = () => {
+    setMenuOpen(false);
+    logout();
+  };
 
   return (
     <header className="topbar">
@@ -50,44 +60,38 @@ export default function Topbar() {
           </div>
 
           {menuOpen && (
-            <div
-              style={{
-                position: "absolute",
-                top: 56,
-                right: 0,
-                background: "white",
-                border: "1px solid var(--border-color)",
-                borderRadius: 10,
-                boxShadow: "var(--shadow-lg)",
-                minWidth: 200,
-                overflow: "hidden",
-                zIndex: 100,
-              }}
-            >
+            <div className="user-menu-dropdown">
+              <div className="user-menu-header">
+                <div className="user-menu-name">{user?.name}</div>
+                <div className="user-menu-email">{user?.email}</div>
+                {user?.role && (
+                  <div className="user-menu-role">
+                    {ROLE_LABELS[user.role] || user.role}
+                  </div>
+                )}
+              </div>
+
               <button
-                className="sidebar-link"
-                style={{
-                  color: "var(--text-primary)",
-                  width: "100%",
-                  borderRadius: 0,
-                }}
-                onClick={() => {
-                  setMenuOpen(false);
-                  navigate("/profile");
-                }}
+                className="user-menu-item"
+                onClick={() => handleNavigate("/profile")}
               >
-                <User size={16} /> Mon profil
+                <User size={16} />
+                Mon profil
               </button>
+
               <button
-                className="sidebar-link"
-                style={{
-                  color: "var(--color-danger)",
-                  width: "100%",
-                  borderRadius: 0,
-                }}
-                onClick={logout}
+                className="user-menu-item"
+                onClick={() => handleNavigate("/history")}
               >
-                <LogOut size={16} /> Déconnexion
+                <Shield size={16} />
+                Mon historique
+              </button>
+
+              <div className="user-menu-divider" />
+
+              <button className="user-menu-item danger" onClick={handleLogout}>
+                <LogOut size={16} />
+                Déconnexion
               </button>
             </div>
           )}

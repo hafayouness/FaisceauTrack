@@ -10,6 +10,7 @@ import {
   Pencil,
   Trash2,
   Truck,
+  MapPin,
 } from "lucide-react";
 
 import { deliveriesApi } from "../api/deliveriesApi";
@@ -70,6 +71,7 @@ export default function Deliveries() {
   const handleExport = async () => {
     try {
       const res = await deliveriesApi.exportExcel(params);
+
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
@@ -82,8 +84,20 @@ export default function Deliveries() {
       window.URL.revokeObjectURL(url);
       toast.success("Export Excel généré");
     } catch (err) {
-      console.error("Export error:", err);
-      toast.error("Erreur lors de l'export");
+      console.error("❌ Export error:", err);
+
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const json = JSON.parse(text);
+          console.error("📋 Erreur backend:", json);
+          toast.error(json.message || "Erreur lors de l'export");
+        } catch (e) {
+          toast.error("Erreur lors de l'export");
+        }
+      } else {
+        toast.error("Erreur lors de l'export");
+      }
     }
   };
 
@@ -100,7 +114,7 @@ export default function Deliveries() {
     setEditItem(null);
   };
 
-  /* ---------- Statut de verrouillage ---------- */
+  /* ---------- Règles de verrouillage ---------- */
   const canEdit = (delivery) =>
     ![
       "IN_TRANSIT",
@@ -190,13 +204,20 @@ export default function Deliveries() {
             <table className="table">
               <thead>
                 <tr>
-                  <th>N° livraison</th>
-                  <th>Destination</th>
-                  <th>Transporteur</th>
-                  <th>Remorque</th>
-                  <th>Statut</th>
-                  <th>Date</th>
-                  <th style={{ textAlign: "right" }}>Actions</th>
+                  <th style={{ minWidth: 160 }}>N° livraison</th>
+                  <th style={{ minWidth: 180 }}>Destination</th>
+                  <th style={{ minWidth: 160 }}>Transporteur</th>
+                  <th style={{ minWidth: 120 }}>Remorque</th>
+                  <th style={{ minWidth: 160 }}>Statut</th>
+                  <th style={{ minWidth: 120 }}>Date</th>
+                  <th
+                    style={{
+                      width: 140,
+                      textAlign: "right",
+                    }}
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -207,24 +228,105 @@ export default function Deliveries() {
                   };
                   return (
                     <tr key={d.id}>
+                      {/* N° livraison */}
                       <td style={{ fontWeight: 600 }}>
                         <Link
                           to={`/deliveries/${d.id}`}
-                          style={{ color: "var(--color-primary-600)" }}
+                          style={{
+                            color: "var(--color-primary-600)",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                          }}
                         >
+                          <Truck size={14} />
                           {d.deliveryNumber}
                         </Link>
                       </td>
-                      <td>{d.destination?.name || "—"}</td>
-                      <td>{d.transporter?.name || "—"}</td>
-                      <td>{d.trailer?.registrationNumber || "—"}</td>
+
+                      {/* Destination */}
+                      <td>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontWeight: 500,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 5,
+                            }}
+                          >
+                            <MapPin
+                              size={12}
+                              style={{ color: "var(--text-muted)" }}
+                            />
+                            {d.destination?.name || "—"}
+                          </span>
+                          {d.destination?.city && (
+                            <span
+                              style={{
+                                fontSize: 12,
+                                color: "var(--text-muted)",
+                                paddingLeft: 17,
+                              }}
+                            >
+                              {d.destination.city}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Transporteur */}
+                      <td>
+                        <span style={{ fontWeight: 500 }}>
+                          {d.transporter?.name || "—"}
+                        </span>
+                      </td>
+
+                      {/* Remorque */}
+                      <td>
+                        {d.trailer?.registrationNumber ? (
+                          <span
+                            style={{
+                              display: "inline-block",
+                              padding: "3px 8px",
+                              background: "var(--color-gray-100)",
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: "var(--color-gray-700)",
+                              fontFamily:
+                                "ui-monospace, SFMono-Regular, monospace",
+                            }}
+                          >
+                            {d.trailer.registrationNumber}
+                          </span>
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
+                      </td>
+
+                      {/* Statut */}
                       <td>
                         <Badge variant={meta.color}>{meta.label}</Badge>
                       </td>
-                      <td>{formatDate(d.createdAt)}</td>
+
+                      {/* Date */}
+                      <td className="text-muted" style={{ fontSize: 13 }}>
+                        {formatDate(d.createdAt)}
+                      </td>
+
+                      {/* Actions */}
                       <td>
-                        <div className="table-actions">
-                          {/* Voir */}
+                        <div
+                          className="table-actions"
+                          style={{ justifyContent: "flex-end" }}
+                        >
                           <Link
                             to={`/deliveries/${d.id}`}
                             className="btn-icon"
@@ -233,7 +335,6 @@ export default function Deliveries() {
                             <Eye size={16} />
                           </Link>
 
-                          {/* Modifier */}
                           {canManageDeliveries && canEdit(d) ? (
                             <button
                               className="btn-icon"
@@ -244,7 +345,6 @@ export default function Deliveries() {
                             </button>
                           ) : null}
 
-                          {/* Supprimer */}
                           {canManageDeliveries && canDelete(d) ? (
                             <button
                               className="btn-icon"
@@ -268,7 +368,6 @@ export default function Deliveries() {
         </>
       )}
 
-      {/* Modal création / édition */}
       <Modal
         open={showForm || !!editItem}
         onClose={handleCancel}
@@ -292,7 +391,6 @@ export default function Deliveries() {
         />
       </Modal>
 
-      {/* Confirmation suppression */}
       <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}

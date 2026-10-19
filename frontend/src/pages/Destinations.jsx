@@ -99,7 +99,6 @@ export default function Destinations() {
         </div>
       </div>
 
-      {/* Contenu */}
       {isLoading ? (
         <Spinner text="Chargement des destinations..." />
       ) : !data?.data?.length ? (
@@ -227,7 +226,6 @@ export default function Destinations() {
                       </Badge>
                     </td>
 
-                    {/* Actions */}
                     <td>
                       <div className="table-actions">
                         {canManage ? (

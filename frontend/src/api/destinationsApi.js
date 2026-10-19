@@ -7,25 +7,26 @@ export const destinationsApi = {
    */
   list: (params) =>
     api.get("/destinations", { params }).then((r) => ({
-      data: r.data.data,
+      data: r.data.data.data,
       pagination: r.data.pagination,
     })),
 
   /**
    * GET /api/destinations/:id
    */
-  get: (id) => api.get(`/destinations/${id}`).then((r) => r.data.data),
+  get: (id) => api.get(`/destinations/${id}`).then((r) => r.data.data.data),
 
   /**
    * POST /api/destinations
    */
-  create: (data) => api.post("/destinations", data).then((r) => r.data.data),
+  create: (data) =>
+    api.post("/destinations", data).then((r) => r.data.data.data),
 
   /**
    * PUT /api/destinations/:id
    */
   update: ({ id, ...data }) =>
-    api.put(`/destinations/${id}`, data).then((r) => r.data.data),
+    api.put(`/destinations/${id}`, data).then((r) => r.data.data).data,
 
   /**
    * DELETE /api/destinations/:id

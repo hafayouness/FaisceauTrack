@@ -7,21 +7,21 @@ export const referencesApi = {
    */
   list: (params) =>
     api.get("/references", { params }).then((r) => ({
-      data: r.data.data,
+      data: r.data.data.data,
       pagination: r.data.pagination,
     })),
 
   /**
    * GET /api/references/:id
    */
-  get: (id) => api.get(`/references/${id}`).then((r) => r.data.data),
+  get: (id) => api.get(`/references/${id}`).then((r) => r.data.data.data),
 
   /**
    * GET /api/references/:id/traceability
    * Retour: { reference, deliveries: [...] }
    */
   traceability: (id) =>
-    api.get(`/references/${id}/traceability`).then((r) => r.data.data),
+    api.get(`/references/${id}/traceability`).then((r) => r.data.data.data),
 
   /**
    * POST /api/references
