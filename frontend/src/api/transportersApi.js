@@ -7,25 +7,26 @@ export const transportersApi = {
    */
   list: (params) =>
     api.get("/transporters", { params }).then((r) => ({
-      data: r.data.data,
+      data: r.data.data.data,
       pagination: r.data.pagination,
     })),
 
   /**
    * GET /api/transporters/:id
    */
-  get: (id) => api.get(`/transporters/${id}`).then((r) => r.data.data),
+  get: (id) => api.get(`/transporters/${id}`).then((r) => r.data.data.data),
 
   /**
    * POST /api/transporters
    */
-  create: (data) => api.post("/transporters", data).then((r) => r.data.data),
+  create: (data) =>
+    api.post("/transporters", data).then((r) => r.data.data.data),
 
   /**
    * PUT /api/transporters/:id
    */
   update: ({ id, ...data }) =>
-    api.put(`/transporters/${id}`, data).then((r) => r.data.data),
+    api.put(`/transporters/${id}`, data).then((r) => r.data.data.data),
 
   /**
    * DELETE /api/transporters/:id

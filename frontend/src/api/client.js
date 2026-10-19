@@ -10,9 +10,6 @@ const api = axios.create({
   },
 });
 
-/* =========================================================
-   🔐 Intercepteur de requête — Ajoute le token JWT
-   ========================================================= */
 api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token;
@@ -24,9 +21,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-/* =========================================================
-   🛡️ Intercepteur de réponse — Gestion globale des erreurs
-   ========================================================= */
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -42,17 +36,11 @@ api.interceptors.response.use(
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
-    }
-    // 403 — Pas de permission
-    else if (status === 403) {
+    } else if (status === 403) {
       toast.error("Vous n'avez pas les permissions nécessaires");
-    }
-    // 409 — Conflit (ex: doublon)
-    else if (status === 409) {
+    } else if (status === 409) {
       toast.error(message);
-    }
-    // 422 — Erreur de validation
-    else if (status === 422) {
+    } else if (status === 422) {
       toast.error(message);
     }
     // 5xx — Erreur serveur

@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import {
-  Search,
-  History as HistoryIcon,
-  Eye,
-  Filter,
-  Download,
-} from "lucide-react";
+import { Search, History as HistoryIcon, Eye, Download } from "lucide-react";
 
 import { historyApi } from "../api/historyApi";
 import PageHeader from "../components/layout/PageHeader";
@@ -49,7 +43,6 @@ export default function History() {
     keepPreviousData: true,
   });
 
-  /* ---------- Export CSV ---------- */
   const handleExportCSV = () => {
     if (!data?.data?.length) return;
 
@@ -103,7 +96,6 @@ export default function History() {
         }
       />
 
-      {/* Barre d'outils */}
       <div className="toolbar">
         <div className="search-box">
           <Search size={16} />
@@ -152,7 +144,6 @@ export default function History() {
         </div>
       </div>
 
-      {/* Contenu */}
       {isLoading ? (
         <Spinner text="Chargement de l'historique..." />
       ) : !data?.data?.length ? (
@@ -168,7 +159,7 @@ export default function History() {
       ) : (
         <>
           <div className="table-wrapper">
-            <table className="table">
+            <table className="table table-centered">
               <thead>
                 <tr>
                   <th>Date</th>
@@ -176,8 +167,7 @@ export default function History() {
                   <th>Action</th>
                   <th>Entité</th>
                   <th>ID Entité</th>
-                  <th>Adresse IP</th>
-                  <th style={{ textAlign: "right" }}>Détails</th>
+                  <th>Détails</th>
                 </tr>
               </thead>
               <tbody>
@@ -189,10 +179,8 @@ export default function History() {
                   return (
                     <tr key={h.id}>
                       {/* Date */}
-                      <td className="text-muted">
-                        <div style={{ fontSize: 13 }}>
-                          {formatDateTime(h.createdAt)}
-                        </div>
+                      <td className="text-muted" style={{ fontSize: 13 }}>
+                        {formatDateTime(h.createdAt)}
                       </td>
 
                       {/* Utilisateur */}
@@ -201,6 +189,7 @@ export default function History() {
                           style={{
                             display: "flex",
                             alignItems: "center",
+                            justifyContent: "center",
                             gap: 8,
                           }}
                         >
@@ -214,12 +203,11 @@ export default function History() {
                           >
                             {initials(h.user?.name)}
                           </div>
-                          <div style={{ minWidth: 0 }}>
+                          <div style={{ textAlign: "left" }}>
                             <div
                               style={{
                                 fontWeight: 600,
                                 fontSize: 13,
-                                whiteSpace: "nowrap",
                               }}
                             >
                               {h.user?.name || "—"}
@@ -237,10 +225,8 @@ export default function History() {
                       </td>
 
                       {/* Entité */}
-                      <td>
-                        <span style={{ fontWeight: 500 }}>
-                          {HISTORY_ENTITIES[h.entity] || h.entity}
-                        </span>
+                      <td style={{ fontWeight: 500 }}>
+                        {HISTORY_ENTITIES[h.entity] || h.entity}
                       </td>
 
                       {/* ID Entité */}
@@ -256,22 +242,16 @@ export default function History() {
                         </code>
                       </td>
 
-                      {/* IP */}
-                      <td className="text-muted text-xs">
-                        {h.ipAddress || "—"}
-                      </td>
-
-                      {/* Actions */}
+                      {/* Détails */}
                       <td>
-                        <div className="table-actions">
-                          <button
-                            className="btn-icon"
-                            title="Voir les détails"
-                            onClick={() => setDetail(h)}
-                          >
-                            <Eye size={16} />
-                          </button>
-                        </div>
+                        <button
+                          className="btn-icon"
+                          title="Voir les détails"
+                          onClick={() => setDetail(h)}
+                          style={{ margin: "0 auto" }}
+                        >
+                          <Eye size={16} />
+                        </button>
                       </td>
                     </tr>
                   );
@@ -308,7 +288,6 @@ function DetailContent({ detail }) {
 
   return (
     <>
-      {/* Résumé */}
       <div className="detail-list" style={{ marginBottom: 20 }}>
         <Info label="Date" value={formatDateTime(detail.createdAt)} />
         <Info label="Utilisateur" value={detail.user?.name} />
@@ -325,7 +304,6 @@ function DetailContent({ detail }) {
         <Info label="Adresse IP" value={detail.ipAddress} />
       </div>
 
-      {/* Données JSON */}
       {detail.details ? (
         <div>
           <div className="detail-label" style={{ marginBottom: 8 }}>

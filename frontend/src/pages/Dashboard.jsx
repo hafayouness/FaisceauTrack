@@ -22,8 +22,14 @@ export default function Dashboard() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard"],
     queryFn: dashboardApi.get,
-    refetchInterval: 30_000, // rafraîchit toutes les 30s
+    refetchInterval: 30_000,
   });
+  console.log("═══════════════════════════════════");
+  console.log("🔍 Dashboard — isLoading:", isLoading);
+  console.log("🔍 Dashboard — error:", error);
+  console.log("🔍 Dashboard — data:", data);
+  console.log("🔍 Dashboard — data?.references:", data?.references);
+  console.log("═══════════════════════════════════");
 
   if (isLoading) {
     return <Spinner size="lg" text="Chargement du tableau de bord..." />;
@@ -43,7 +49,6 @@ export default function Dashboard() {
     );
   }
 
-  /* -------- Cartes statistiques -------- */
   const stats = [
     {
       label: "Références actives",

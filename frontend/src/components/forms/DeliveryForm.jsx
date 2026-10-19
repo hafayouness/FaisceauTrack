@@ -5,11 +5,9 @@ import { Plus, Trash2 } from "lucide-react";
 
 import { deliveriesApi } from "../../api/deliveriesApi";
 import { referencesApi } from "../../api/referencesApi";
-import {
-  trailersApi,
-  transportersApi,
-  destinationsApi,
-} from "../../api/crudApi";
+import { trailersApi } from "../../api/trailersApi";
+import { transportersApi } from "../../api/transportersApi";
+import { destinationsApi } from "../../api/destinationsApi";
 
 import Input from "../ui/Input";
 import Select from "../ui/Select";
@@ -27,7 +25,6 @@ const UNIT_OPTIONS = [
   { value: "ML", label: "ML" },
 ];
 
-/* 🛡️ Helper robuste : extrait un tableau quoi qu'il arrive */
 const toArray = (value) => {
   if (Array.isArray(value)) return value;
   if (Array.isArray(value?.data)) return value.data;
@@ -70,7 +67,6 @@ export default function DeliveryForm({ initial, onSuccess, onCancel }) {
 
   const [errors, setErrors] = useState({});
 
-  /* ---------- Fetch référentiels ---------- */
   const { data: refsData } = useQuery({
     queryKey: ["references-all"],
     queryFn: () => referencesApi.list({ limit: 500 }),
@@ -91,7 +87,6 @@ export default function DeliveryForm({ initial, onSuccess, onCancel }) {
     queryFn: () => destinationsApi.list({ limit: 500 }),
   });
 
-  /* ---------- Mutation ---------- */
   const mutation = useMutation({
     mutationFn: (payload) =>
       isEdit
@@ -111,7 +106,6 @@ export default function DeliveryForm({ initial, onSuccess, onCancel }) {
     },
   });
 
-  /* ---------- Gestion des items ---------- */
   const addItem = () =>
     setItems([...items, { referenceId: "", quantity: "", unit: DEFAULT_UNIT }]);
 
@@ -120,7 +114,6 @@ export default function DeliveryForm({ initial, onSuccess, onCancel }) {
   const updateItem = (idx, patch) =>
     setItems(items.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
 
-  /* ---------- Submit ---------- */
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors({});
@@ -171,7 +164,6 @@ export default function DeliveryForm({ initial, onSuccess, onCancel }) {
     mutation.mutate(payload);
   };
 
-  /* ---------- Options des selects (ROBUSTE) ---------- */
   const refsOptions = toArray(refsData)
     .filter((r) => r.isActive)
     .map((r) => ({
@@ -191,12 +183,10 @@ export default function DeliveryForm({ initial, onSuccess, onCancel }) {
     .filter((d) => d.isActive)
     .map((d) => ({ value: d.id, label: d.name }));
 
-  /* ---------- Debug (à retirer plus tard) ---------- */
   console.log("refsData:", refsData);
   console.log("refsOptions:", refsOptions);
   console.log("trailersOptions:", trailersOptions);
 
-  /* ---------- Rendu ---------- */
   return (
     <form onSubmit={handleSubmit} id="delivery-form">
       <Input

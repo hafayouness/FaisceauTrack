@@ -7,7 +7,6 @@ export default function Pagination({ pagination, onPageChange }) {
   const from = total === 0 ? 0 : (page - 1) * limit + 1;
   const to = Math.min(page * limit, total);
 
-  // Pages à afficher (max 5 autour de la page courante)
   const pages = [];
   const start = Math.max(1, page - 2);
   const end = Math.min(totalPages, page + 2);
@@ -48,7 +47,6 @@ export default function Pagination({ pagination, onPageChange }) {
           </button>
         ))}
 
-        {/* Dernière page + ... */}
         {end < totalPages && (
           <>
             {end < totalPages - 1 && (

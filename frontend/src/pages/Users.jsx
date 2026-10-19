@@ -25,7 +25,6 @@ import { useDebounce } from "../hooks/useDebounce";
 import { ROLE_LABELS, ROLES, PAGE_SIZE } from "../utils/constants";
 import { initials, formatDateTime } from "../utils/formatters";
 
-/* Couleur du badge selon le rôle */
 const ROLE_COLORS = {
   [ROLES.ADMIN]: "danger",
   [ROLES.LOGISTIC_MANAGER]: "primary",
@@ -90,7 +89,6 @@ export default function Users() {
         }
       />
 
-      {/* Barre d'outils */}
       <div className="toolbar">
         <div className="search-box">
           <Search size={16} />
@@ -122,7 +120,6 @@ export default function Users() {
         </div>
       </div>
 
-      {/* Contenu */}
       {isLoading ? (
         <Spinner text="Chargement des utilisateurs..." />
       ) : !data?.data?.length ? (
@@ -158,7 +155,6 @@ export default function Users() {
               <tbody>
                 {data.data.map((u) => (
                   <tr key={u.id}>
-                    {/* Utilisateur (avatar + nom + email) */}
                     <td>
                       <div
                         style={{
@@ -175,21 +171,18 @@ export default function Users() {
                       </div>
                     </td>
 
-                    {/* Rôle */}
                     <td>
                       <Badge variant={ROLE_COLORS[u.role] || "default"}>
                         {ROLE_LABELS[u.role] || u.role}
                       </Badge>
                     </td>
 
-                    {/* Statut */}
                     <td>
                       <Badge variant={u.isActive ? "success" : "default"}>
                         {u.isActive ? "Actif" : "Inactif"}
                       </Badge>
                     </td>
 
-                    {/* Dernière connexion */}
                     <td className="text-muted">
                       {u.lastLoginAt ? formatDateTime(u.lastLoginAt) : "Jamais"}
                     </td>
@@ -226,7 +219,6 @@ export default function Users() {
         </>
       )}
 
-      {/* Modal création / édition */}
       <Modal
         open={showForm || !!editItem}
         onClose={handleCancel}
@@ -249,7 +241,6 @@ export default function Users() {
         />
       </Modal>
 
-      {/* Confirmation désactivation */}
       <ConfirmDialog
         open={!!deactivateTarget}
         onClose={() => setDeactivateTarget(null)}
