@@ -165,7 +165,7 @@ export default function History() {
                   <th>Date</th>
                   <th>Utilisateur</th>
                   <th>Action</th>
-                  <th>Entité</th>
+                  {/* <th>Entité</th> */}
                   <th>ID Entité</th>
                   <th>Détails</th>
                 </tr>
@@ -178,12 +178,10 @@ export default function History() {
                   };
                   return (
                     <tr key={h.id}>
-                      {/* Date */}
                       <td className="text-muted" style={{ fontSize: 13 }}>
                         {formatDateTime(h.createdAt)}
                       </td>
 
-                      {/* Utilisateur */}
                       <td>
                         <div
                           style={{
@@ -219,30 +217,14 @@ export default function History() {
                         </div>
                       </td>
 
-                      {/* Action */}
                       <td>
                         <Badge variant={meta.color}>{meta.label}</Badge>
                       </td>
 
-                      {/* Entité */}
                       <td style={{ fontWeight: 500 }}>
                         {HISTORY_ENTITIES[h.entity] || h.entity}
                       </td>
 
-                      {/* ID Entité */}
-                      <td>
-                        <code
-                          className="text-muted text-xs"
-                          style={{
-                            fontFamily:
-                              "ui-monospace, SFMono-Regular, Menlo, monospace",
-                          }}
-                        >
-                          {h.entityId ? h.entityId.slice(0, 8) + "…" : "—"}
-                        </code>
-                      </td>
-
-                      {/* Détails */}
                       <td>
                         <button
                           className="btn-icon"
@@ -264,7 +246,6 @@ export default function History() {
         </>
       )}
 
-      {/* Modal détails */}
       <Modal
         open={!!detail}
         onClose={() => setDetail(null)}
@@ -277,9 +258,6 @@ export default function History() {
   );
 }
 
-/* =========================================================
-   Contenu du modal détails
-   ========================================================= */
 function DetailContent({ detail }) {
   const meta = HISTORY_ACTION_META[detail.action] || {
     label: detail.action,
@@ -300,8 +278,8 @@ function DetailContent({ detail }) {
           label="Entité"
           value={HISTORY_ENTITIES[detail.entity] || detail.entity}
         />
-        <Info label="ID Entité" value={detail.entityId} />
-        <Info label="Adresse IP" value={detail.ipAddress} />
+        {/* <Info label="ID Entité" value={detail.entityId} /> */}
+        {/* <Info label="Adresse IP" value={detail.ipAddress} /> */}
       </div>
 
       {detail.details ? (

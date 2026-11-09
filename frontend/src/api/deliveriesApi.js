@@ -26,7 +26,6 @@ export const deliveriesApi = {
     );
 
     return api.get("/deliveries/export", {
-      // ⚠️ /deliveries/export
       params: cleanParams,
       responseType: "blob",
     });

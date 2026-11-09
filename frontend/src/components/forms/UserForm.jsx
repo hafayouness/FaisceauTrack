@@ -22,7 +22,6 @@ export default function UserForm({ initial, onSuccess, onCancel }) {
     mutationFn: (data) => {
       const payload = { ...data };
 
-      // En édition : ne pas envoyer le mot de passe s'il est vide
       if (isEdit && !payload.password) {
         delete payload.password;
       }
@@ -49,7 +48,6 @@ export default function UserForm({ initial, onSuccess, onCancel }) {
     e.preventDefault();
     setErrors({});
 
-    // Validation locale
     if (!isEdit && (!form.password || form.password.length < 8)) {
       setErrors({
         password: "Le mot de passe doit contenir au moins 8 caractères",

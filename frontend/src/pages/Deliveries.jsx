@@ -50,14 +50,12 @@ export default function Deliveries() {
     status: status || undefined,
   };
 
-  /* ---------- Liste ---------- */
   const { data, isLoading } = useQuery({
     queryKey: ["deliveries", params],
     queryFn: () => deliveriesApi.list(params),
     keepPreviousData: true,
   });
 
-  /* ---------- Suppression ---------- */
   const deleteMutation = useMutation({
     mutationFn: deliveriesApi.remove,
     onSuccess: () => {
@@ -67,7 +65,6 @@ export default function Deliveries() {
     },
   });
 
-  /* ---------- Export Excel ---------- */
   const handleExport = async () => {
     try {
       const res = await deliveriesApi.exportExcel(params);

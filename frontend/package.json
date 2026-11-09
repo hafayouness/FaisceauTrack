@@ -14,6 +14,8 @@
     "@tanstack/react-query-devtools": "^5.104.1",
     "axios": "^1.20.0",
     "date-fns": "^4.4.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
     "lucide-react": "^1.52.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

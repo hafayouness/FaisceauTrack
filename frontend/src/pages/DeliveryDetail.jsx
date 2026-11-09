@@ -53,7 +53,6 @@ export default function DeliveryDetail() {
     color: "default",
   };
 
-  /* Calcul des totaux */
   const items = delivery.items || [];
   const receptions = delivery.receptions || [];
 
@@ -66,7 +65,6 @@ export default function DeliveryDetail() {
 
   return (
     <>
-      {/* En-tête */}
       <PageHeader
         title={`Livraison ${delivery.deliveryNumber}`}
         subtitle={
@@ -85,7 +83,6 @@ export default function DeliveryDetail() {
         actions={<Badge variant={meta.color}>{meta.label}</Badge>}
       />
 
-      {/* Carte 1 : Informations générales */}
       <Card title="Informations générales" className="mb-4">
         <div className="detail-list">
           <Info
@@ -162,7 +159,6 @@ export default function DeliveryDetail() {
         )}
       </Card>
 
-      {/* Statistiques */}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon primary">
@@ -197,7 +193,6 @@ export default function DeliveryDetail() {
         </div>
       </div>
 
-      {/* Carte 2 : Références / Items */}
       <Card title={`Références (${items.length})`}>
         {items.length === 0 ? (
           <p className="text-muted">Aucune référence dans cette livraison.</p>
@@ -270,7 +265,6 @@ export default function DeliveryDetail() {
         )}
       </Card>
 
-      {/* Carte 3 : Réceptions */}
       {receptions.length > 0 && (
         <Card title={`Réceptions (${receptions.length})`} className="mt-4">
           <div className="table-wrapper" style={{ border: "none" }}>
@@ -325,7 +319,6 @@ export default function DeliveryDetail() {
   );
 }
 
-/* Sous-composant Info */
 function Info({ icon: Icon, label, value, sub }) {
   return (
     <div className="detail-item">

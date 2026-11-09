@@ -10,6 +10,25 @@ const api = axios.create({
   },
 });
 
+const extractMessage = (error) => {
+  const msg = error?.response?.data?.message;
+
+  if (typeof msg === "string" && msg.trim()) return msg;
+
+  if (msg && typeof msg === "object") {
+    if (typeof msg.message === "string" && msg.message.trim()) {
+      return msg.message;
+    }
+    return JSON.stringify(msg);
+  }
+
+  if (typeof error?.message === "string" && error.message.trim()) {
+    return error.message;
+  }
+
+  return "Une erreur est survenue";
+};
+
 api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token;
@@ -25,16 +44,20 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Une erreur est survenue";
+    const message = extractMessage(error);
+    const url = error.config?.url || "";
 
-    // 401 — Non authentifié → déconnexion + redirection
+    const isAuthRoute =
+      url.includes("/auth/login") || url.includes("/auth/register");
+
     if (status === 401) {
-      useAuthStore.getState().logout();
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
+      if (isAuthRoute) {
+        toast.error(message);
+      } else {
+        useAuthStore.getState().logout();
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
       }
     } else if (status === 403) {
       toast.error("Vous n'avez pas les permissions nécessaires");
@@ -42,13 +65,9 @@ api.interceptors.response.use(
       toast.error(message);
     } else if (status === 422) {
       toast.error(message);
-    }
-    // 5xx — Erreur serveur
-    else if (status >= 500) {
+    } else if (status >= 500) {
       toast.error("Erreur serveur. Veuillez réessayer plus tard.");
-    }
-    // Autres erreurs
-    else if (!error.config?.silent) {
+    } else if (!error.config?.silent) {
       toast.error(message);
     }
 
