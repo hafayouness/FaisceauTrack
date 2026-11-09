@@ -33,6 +33,8 @@ export default function Login() {
 
   return (
     <div className="login-page">
+     
+      <div className="login-bg-overlay" />
       <div className="login-card">
         <div className="login-logo">FT</div>
         <h1 className="login-title">FaisceauTrack</h1>
@@ -41,7 +43,6 @@ export default function Login() {
         </p>
 
         <form onSubmit={handleSubmit}>
-          {/* Email */}
           <div className="form-group">
             <label className="form-label">
               Adresse email <span className="required">*</span>

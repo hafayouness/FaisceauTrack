@@ -9,7 +9,6 @@ import Input from "../ui/Input";
 import Select from "../ui/Select";
 import { RECEPTION_STATUS_META } from "../../utils/constants";
 
-/* 🛡️ Helper robuste : extrait un tableau de n'importe quelle structure */
 const toArray = (value) => {
   if (Array.isArray(value)) return value;
   if (Array.isArray(value?.data)) return value.data;
@@ -30,13 +29,11 @@ export default function ReceptionForm({ onSuccess, onCancel }) {
   });
   const [errors, setErrors] = useState({});
 
-  /* ---------- Fetch livraisons ---------- */
   const { data: deliveriesData, isLoading } = useQuery({
     queryKey: ["deliveries-for-reception"],
     queryFn: () => deliveriesApi.list({ limit: 500 }),
   });
 
-  /* 🔍 DEBUG — à retirer après */
   console.log("🔍 deliveriesData:", deliveriesData);
   console.log("🔍 typeof deliveriesData?.data:", typeof deliveriesData?.data);
   console.log(
@@ -44,10 +41,8 @@ export default function ReceptionForm({ onSuccess, onCancel }) {
     Array.isArray(deliveriesData?.data),
   );
 
-  /* ---------- Extraction robuste ---------- */
   const allDeliveries = toArray(deliveriesData);
 
-  /* Livraisons éligibles */
   const eligibleDeliveries = allDeliveries.filter((d) =>
     ["IN_TRANSIT", "ARRIVED", "PARTIAL_RECEPTION", "READY"].includes(d.status),
   );

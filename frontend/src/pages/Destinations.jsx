@@ -134,7 +134,6 @@ export default function Destinations() {
               <tbody>
                 {data.data.map((d) => (
                   <tr key={d.id}>
-                    {/* Nom + icône */}
                     <td>
                       <div
                         style={{

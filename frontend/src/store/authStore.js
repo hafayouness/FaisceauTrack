@@ -4,16 +4,9 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export const useAuthStore = create(
   persist(
     (set, get) => ({
-      /* ==============================
-         État
-         ============================== */
       user: null,
       token: null,
       isAuthenticated: false,
-
-      /* ==============================
-         Actions
-         ============================== */
 
       /**
        * Enregistre la session après login/register
@@ -26,14 +19,8 @@ export const useAuthStore = create(
           isAuthenticated: !!token,
         }),
 
-      /**
-       * Met à jour les infos utilisateur (sans toucher au token)
-       */
       setUser: (user) => set({ user }),
 
-      /**
-       * Déconnexion : vide tout
-       */
       logout: () =>
         set({
           user: null,
@@ -51,9 +38,9 @@ export const useAuthStore = create(
       },
     }),
     {
-      name: "faisceautrack-auth", // clé localStorage
+      name: "faisceautrack-auth",
       storage: createJSONStorage(() => localStorage),
-      // On ne persiste que ce qui est nécessaire
+
       partialize: (state) => ({
         user: state.user,
         token: state.token,

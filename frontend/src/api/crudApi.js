@@ -3,7 +3,7 @@ import api from "./client";
 export const buildCrudApi = (endpoint) => ({
   list: (params) =>
     api.get(`/${endpoint}`, { params }).then((r) => ({
-      data: r.data.data, // ← tableau des entités
+      data: r.data.data,
       pagination: r.data.pagination,
     })),
   // ...
